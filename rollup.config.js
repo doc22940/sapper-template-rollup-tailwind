@@ -8,9 +8,9 @@ import config from "sapper/config/rollup.js";
 import pkg from "./package.json";
 
 // For Tailwind
+import path from "path";
 import getPreprocessor from "svelte-preprocess";
 import postcss from "rollup-plugin-postcss";
-import path from "path";
 
 const mode = process.env.NODE_ENV;
 const dev = mode === "development";
@@ -27,7 +27,7 @@ const postcssPlugins = [
   //   require("postcss-url")(),
   require("tailwindcss")("./tailwind.config.js"),
   require("postcss-preset-env")({ stage: 1 }),
-  require("cssnano"),
+  !dev && require("cssnano")(),
 ].filter(Boolean);
 
 const preprocess = getPreprocessor({
@@ -110,6 +110,7 @@ export default {
       }),
       commonjs(),
       postcss({
+        extract: true,
         plugins: postcssPlugins,
         extract: path.resolve(__dirname, "./static/global.css"),
       }),
